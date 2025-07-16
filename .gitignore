@@ -37,3 +37,4 @@ cache/
 node_modules/
 
 *.swp
+archive/
