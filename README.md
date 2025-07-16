@@ -4,7 +4,7 @@ Plot distance‑time graphs for UK train services using live data from
 [RealTimeTrains](https://www.realtimetrains.co.uk/) plus your own
 CSV schedules.
 
-![example output](examples/screenshot_overview.png)
+![example output](examples/sample_overview.png)
 
 ---
 
