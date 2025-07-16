@@ -1,0 +1,42 @@
+# pyproject.toml
+[project]
+name = "py-train-graph"
+version = "0.1.0"
+description = "Plot distance-time graphs for UK train services using RealTimeTrains data and custom schedules."
+readme = "README.md"
+authors = [
+  { name = "Jonathan Prince" }
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.2",
+  "matplotlib>=3.9",
+  "numpy>=1.24",
+  "requests>=2.32",
+  "beautifulsoup4>=4.12",
+  "tqdm>=4.65",
+  "tabulate>=0.9",
+  # Optional but auto-detected for caching
+  "requests-cache>=1.2 ; extra == 'cache'"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "ruff>=0.4",
+  "black>=24.4",
+  "mypy>=1.10",
+  "requests-cache>=1.2",
+]
+
+[project.scripts]
+py-train-graph = "py_train_graph.main:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["py_train_graph*"]
