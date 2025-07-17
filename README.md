@@ -41,7 +41,7 @@ On **Linux/macOS**, launch via:
 or double-click `launch-train-graph.sh`.
 
 On **Windows**, double‑click `launch-train-graph.bat`
-(or run it in a terminal to pass arguments)
+(or run it in a terminal to pass arguments).
 
 ---
 
@@ -139,15 +139,6 @@ Save common parameters in a **JSON** file under `presets/`. Example structure:
 }
 
 ```
-
----
-
-## Contributing
-
-1. Fork the repo and create your branch: `git checkout -b feature/foo`
-2. Run `ruff --fix` and `black .` before committing
-3. Add tests (`pytest`) for new behaviour
-4. Open a pull request 🎉
 
 ---
 
