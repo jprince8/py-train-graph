@@ -27,6 +27,7 @@ from pathlib import Path
 from typing import List
 import json
 from typing import Any, Dict
+import re
 
 import tkinter as _tk
 from tkinter import filedialog as _fd
@@ -173,9 +174,33 @@ def _resolve_path(name_str: str, target_dir: str, ext: str) -> Path:
 
 
 def _load_preset(path: Path) -> Dict[str, Any]:
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
-    return data
+    """Load ``path`` as JSON with helpful error handling.
+
+    If a trailing comma is detected, attempt to automatically remove it and
+    reload.  Otherwise raise ``ValueError`` with the location of the parsing
+    issue.
+    """
+
+    text = path.read_text(encoding="utf-8")
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as e:  # pragma: no cover - only triggered on bad JSON
+        # Try to recover from a trailing comma
+        fixed = re.sub(r",(\s*[}\]])", r"\1", text)
+        if fixed != text:
+            try:
+                logging.warning(
+                    "Removed trailing comma in %s at line %s column %s",
+                    path,
+                    e.lineno,
+                    e.colno,
+                )
+                return json.loads(fixed)
+            except json.JSONDecodeError:
+                pass
+        raise ValueError(
+            f"Invalid JSON in preset {path} at line {e.lineno}, column {e.colno}: {e.msg}"
+        ) from e
 
 
 # ---------------------------------------------------------------------------#
@@ -231,7 +256,18 @@ def main(argv: List[str] | None = None) -> None:
         # load everything from JSON
         preset_path = _resolve_path(pre_args.preset, "presets", "json")
         cfg = _load_preset(preset_path)
-        # merge with verbose
+
+        override = argparse.ArgumentParser(add_help=False)
+        override.add_argument("-n", "--limit", type=int)
+        override.add_argument("--no-show", dest="show_plot", action="store_false", default=None)
+        override.add_argument("--show", dest="show_plot", action="store_true", default=None)
+        override_args, _ = override.parse_known_args(remaining)
+
+        if override_args.limit is not None:
+            cfg["limit"] = override_args.limit
+        if override_args.show_plot is not None:
+            cfg["show_plot"] = override_args.show_plot
+
         cfg["show_plot"] = cfg.get("show_plot", True)
         plot.plot_services(
             distance_csv=Path(cfg["route_csv"]),
