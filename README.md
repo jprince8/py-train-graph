@@ -23,7 +23,7 @@ CSV schedules.
 
 ## Installation
 
-[Download a zip](https://github.com/jprince8/py-train-graph/archive/refs/heads/main.zip), and extract it:
+[Download a zip](https://github.com/jprince8/py-train-graph/archive/refs/heads/main.zip), and extract it.
 
 Or clone the repo:
 
