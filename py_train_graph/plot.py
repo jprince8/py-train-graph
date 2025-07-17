@@ -21,6 +21,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import itertools
 from tqdm import tqdm
 
 from . import config, fetch, parse, utils
@@ -174,6 +175,7 @@ def plot_services(
     direction: str | None = None,  # 'up' or 'down'
     reverse_route: bool | None = None,
     show_plot: bool | None = None,
+    same_custom_colour: bool | None = None,
     always_include: list[str] | None = None,
 ) -> None:
     """
@@ -183,11 +185,17 @@ def plot_services(
     ----------
     always_include
         Headcodes that skip the direction filter regardless of *direction*.
+    same_custom_colour
+        If ``True``, all custom schedules share the first colour in the
+        custom schedule colour list.
 
     Images are written to :pydata:`config.OUTPUT_DIR` with timestamped filenames.
     """
     reverse_route = config.REVERSE_ROUTE if reverse_route is None else reverse_route
     show_plot = config.SHOW_PLOT if show_plot is None else show_plot
+    same_custom_colour = (
+        config.SAME_CUSTOM_COLOUR if same_custom_colour is None else same_custom_colour
+    )
     always_include = [hc.upper() for hc in always_include or []]
 
     # ---------------------------------------------------------------------#
@@ -221,7 +229,7 @@ def plot_services(
     fig.autofmt_xdate()
     ax.set_xlabel("Time")
     ax.set_ylabel("Distance (mi)")
-    ax.set_title("Loading services...", fontsize=14, fontweight='bold')
+    ax.set_title("Loading services...", fontsize=14, fontweight="bold")
     base_date = _dt.strptime(date_str, "%Y-%m-%d").date()
     ax.set_xlim(
         _dt.combine(base_date, start_dt),
@@ -312,7 +320,13 @@ def plot_services(
     # ---------------------------------------------------------------------#
     custom_headcodes = []
     if custom_schedules and config.USE_CUSTOM:
-        custom_colours = iter(["#ff0000", "#ffaa00", "#00ff00", "#00aaff", "#aa00ff"])
+        colour_list = ["#ff0000", "#ffaa00", "#00ff00", "#00aaff", "#aa00ff"]
+        # Optionally use the first colour for every custom schedule
+        custom_colours = (
+            itertools.repeat(colour_list[0])
+            if same_custom_colour
+            else iter(colour_list)
+        )
 
         for path in custom_schedules:
             df = parse.parse_manual_csv(path, distance_map, date_str)
@@ -370,34 +384,32 @@ def plot_services(
     # ---------------------------------------------------------------------#
     plt.subplots_adjust(left=0.12, right=0.98, top=0.96, bottom=0.1)
     # Add a descriptive title: Route name, date, time window & headcodes
-    route_name = Path(distance_csv).stem.replace('_', ' ').title()
+    route_name = Path(distance_csv).stem.replace("_", " ").title()
     time_range = f"{start_time}–{end_time}"
     headcodes_joined = ", ".join(custom_headcodes)
-    title_text = f"{route_name} | {date_str} | {time_range} | Services: {headcodes_joined}"
-    ax.set_title(title_text, fontsize=14, fontweight='bold')
+    title_text = (
+        f"{route_name} | {date_str} | {time_range} | Services: {headcodes_joined}"
+    )
+    ax.set_title(title_text, fontsize=14, fontweight="bold")
 
     # ---------------------------------------------------------------------#
     # Save images                                                          #
     # ---------------------------------------------------------------------#
     # build descriptive filename: route, time window, direction, and timestamp
-    headcodes_joined = "_"+"_".join(custom_headcodes)
+    headcodes_joined = "_" + "_".join(custom_headcodes)
     route_name = Path(distance_csv).stem
     time_range = f"{start_time.replace(':', '')}-{end_time.replace(':', '')}"
     dir_tag = direction or "all"
     filename_base = f"{route_name}_{date_str}_{time_range}_{dir_tag}{headcodes_joined}"
 
     # Overview (small, high DPI)
-    overview_path = (
-        config.OUTPUT_DIR / f"{filename_base}_overview.png"
-    )
+    overview_path = config.OUTPUT_DIR / f"{filename_base}_overview.png"
     fig.set_size_inches(*config.OVERVIEW_FIGSIZE)
     fig.savefig(overview_path, dpi=config.OVERVIEW_DPI, bbox_inches="tight")
 
     # Zoomable (large canvas, low DPI)
     fig.set_size_inches(*config.ZOOMABLE_FIGSIZE)
-    zoom_path = (
-        config.OUTPUT_DIR / f"{filename_base}_zoomable.png"
-    )
+    zoom_path = config.OUTPUT_DIR / f"{filename_base}_zoomable.png"
     fig.savefig(zoom_path, dpi=config.ZOOMABLE_DPI, bbox_inches="tight")
 
     _LOG.info("Saved overview image → %s", overview_path)
