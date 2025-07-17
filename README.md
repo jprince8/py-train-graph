@@ -38,7 +38,7 @@ git clone https://github.com/your‑github/py‑train‑graph.git
 On **Linux/macOS**, double-click `launch-train-graph.sh`, or launch via:
 
 ```bash
-./scripts/launch-train-graph.sh
+./launch-train-graph.sh
 ```
 
 On **Windows**, double‑click `launch-train-graph.bat`, or launch via:
@@ -59,7 +59,7 @@ On **Windows**, double‑click `launch-train-graph.bat`, or launch via:
 Alternatively, run using CLI arguments:
 
 ```bash
-./scripts/launch-train-graph.sh routes/london_to_oxford.csv 2025-08-20 03:00 06:00 \
+./launch-train-graph.sh routes/london_to_oxford.csv 2025-08-20 03:00 06:00 \
   -l PAD ACTONW HTRWAJN STL \
   -m 1 --direction up
 ```
@@ -73,7 +73,7 @@ Alternatively, run using CLI arguments:
 Or use a preset:
 
 ```bash
-./scripts/launch-train-graph.sh -p example_preset.json
+./launch-train-graph.sh -p example_preset.json
 ```
 
 ```bat
