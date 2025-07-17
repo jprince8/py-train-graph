@@ -36,13 +36,34 @@ _LOG = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------#
 
 
-def _build_distance_map(csv_path: str | Path) -> pd.DataFrame:
+def _build_distance_map(
+    csv_path: str | Path, *, reverse_route: bool | None = None
+) -> pd.DataFrame:
     """
     Return a DataFrame indexed by Location with columns:
-      - Distance (mi)       (floats, negative if REVERSE_ROUTE)
-      - OriginalLocation    (station name before stripping [ABC])
+      - Distance (mi)       (floats, negative if ``reverse_route``)
+      - OriginalLocation    (station name before stripping ``[ABC]``)
+
+    Parameters
+    ----------
+    csv_path
+        Path to the route CSV file.
+    reverse_route
+        If ``True`` distances are negated.  ``None`` falls back to
+        :data:`config.REVERSE_ROUTE`.
     """
-    df = pd.read_csv(csv_path)
+    reverse_route = config.REVERSE_ROUTE if reverse_route is None else reverse_route
+
+    try:
+        df = pd.read_csv(csv_path)
+    except FileNotFoundError as e:  # pragma: no cover - user error
+        raise FileNotFoundError(f"Route CSV not found: {csv_path}") from e
+    except Exception as e:  # pragma: no cover - user error
+        raise ValueError(f"Failed reading route CSV {csv_path}: {e}") from e
+
+    required = {"Location", "Distance (mi)"}
+    if not required.issubset(df.columns):
+        raise ValueError(f"{csv_path} missing columns {required}")
 
     # flag rows that had bracketed text
     df["OriginalLocation"] = df["Location"].copy()
@@ -51,7 +72,7 @@ def _build_distance_map(csv_path: str | Path) -> pd.DataFrame:
 
     # build the output DataFrame
     out = df.set_index("Location")[["Distance (mi)", "OriginalLocation"]]
-    if config.REVERSE_ROUTE:
+    if reverse_route:
         out["Distance (mi)"] = -out["Distance (mi)"]
 
     # sort by distance
@@ -131,8 +152,15 @@ def _plot_dataframe(
     marker_size: float = 3.0,
     direction: str,
     end_time: _time,
+    reverse_route: bool | None = None,
 ) -> None:
-    """Plot a single service and label its last point."""
+    """Plot a single service and label its last point.
+
+    Parameters
+    ----------
+    reverse_route
+        Overrides :data:`config.REVERSE_ROUTE` for label placement.
+    """
     times_list = list(times)
     dist_list = list(dist)
 
@@ -154,6 +182,7 @@ def _plot_dataframe(
         headcode,
         color,
         direction,
+        reverse_route=reverse_route,
     )
 
 
@@ -201,7 +230,7 @@ def plot_services(
     # ---------------------------------------------------------------------#
     # Prepare data                                                         #
     # ---------------------------------------------------------------------#
-    distance_map = _build_distance_map(distance_csv)
+    distance_map = _build_distance_map(distance_csv, reverse_route=reverse_route)
 
     base_urls = utils.generate_rtt_urls(
         locations, date_str, start_time, end_time, margin_hours
@@ -308,6 +337,7 @@ def plot_services(
             marker_size=3.0,
             direction=direction or "up",
             end_time=end_dt,
+            reverse_route=reverse_route,
         )
         plotted.append((headcode, url))
         # live update
@@ -368,6 +398,7 @@ def plot_services(
                 marker_size=4.0,
                 direction=direction or "up",
                 end_time=end_dt,
+                reverse_route=reverse_route,
             )
             plotted.append((headcode, str(path)))
             custom_headcodes.append(headcode)
