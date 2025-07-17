@@ -1,7 +1,5 @@
 # py‑train‑graph
 
-![example output](resources/logo.jpg)
-
 Plot distance‑time graphs for UK train services using live data from
 [RealTimeTrains](https://www.realtimetrains.co.uk/) plus your own
 CSV schedules.
@@ -145,3 +143,5 @@ Save common parameters in a **JSON** file under `presets/`. Example structure:
 ## Licence
 
 MIT © Jonathan Prince, 2025
+
+![example output](resources/logo.jpg)
