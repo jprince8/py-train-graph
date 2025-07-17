@@ -255,7 +255,7 @@ def main(argv: List[str] | None = None) -> None:
     plot.plot_services(
         distance_csv=args.route_csv,
         locations=args.locations,
-        date=args.date,
+        date_str=args.date,
         start_time=args.start_time,
         end_time=args.end_time,
         margin_hours=args.margin_hours,
