@@ -32,6 +32,10 @@ git clone https://github.com/your‑github/py‑train‑graph.git
 cd py‑train‑graph
 ```
 
+---
+
+## Quick start
+
 On **Linux/macOS**, launch via:
 
 ```bash
@@ -42,10 +46,6 @@ or double-click `launch-train-graph.sh`.
 
 On **Windows**, double‑click `launch-train-graph.bat`
 (or run it in a terminal to pass arguments).
-
----
-
-## Quick start
 
 ```bash
 # Full invocation:
