@@ -38,7 +38,6 @@ _ARR_CSS = "div.arr"
 _DEP_CSS = "div.dep"
 _TOC_OPERATOR_CSS = "div.toc.h3 > div"
 _DEPARTURE_DATE_CSS = "div.header + small"
-_TOC_OPERATOR_CSS = "div.toc.h3 > div"
 _BUS_ICON_CSS = "div.header span.glyphicons-bus"
 
 
