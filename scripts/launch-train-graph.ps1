@@ -6,7 +6,9 @@ Param(
 )
 
 # Ensure we run from the repo root
-Push-Location (Split-Path $MyInvocation.MyCommand.Path -Parent)\..
+$scriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
+$repoRoot = Join-Path $scriptDir ".." | Resolve-Path
+Push-Location $repoRoot
 
 $venv = ".\.venv"
 
