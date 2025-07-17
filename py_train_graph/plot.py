@@ -170,7 +170,7 @@ def plot_services(
     end_time: str,
     margin_hours: int = 0,
     *,
-    spreadsheets: list[str | Path] | None = None,
+    custom_timings: list[str | Path] | None = None,
     limit: int | None = None,
     direction: str | None = None,  # 'up' or 'down'
     reverse_route: bool | None = None,
@@ -312,10 +312,10 @@ def plot_services(
     # Plot custom spreadsheets                                             #
     # ---------------------------------------------------------------------#
     custom_headcodes = []
-    if spreadsheets and config.USE_CUSTOM:
+    if custom_timings and config.USE_CUSTOM:
         custom_colours = iter(["#ff0000", "#ffaa00", "#00ff00", "#00aaff", "#aa00ff"])
 
-        for path in spreadsheets:
+        for path in custom_timings:
             df = parse.parse_manual_csv(path, distance_map, date_str)
             if df.empty:
                 continue

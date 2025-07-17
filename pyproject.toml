@@ -17,8 +17,7 @@ dependencies = [
   "beautifulsoup4>=4.12",
   "tqdm>=4.65",
   "tabulate>=0.9",
-  # Optional but auto-detected for caching
-  "requests-cache>=1.2 ; extra == 'cache'"
+  "requests-cache>=1.2"
 ]
 
 [project.optional-dependencies]
@@ -27,7 +26,6 @@ dev = [
   "ruff>=0.4",
   "black>=24.4",
   "mypy>=1.10",
-  "requests-cache>=1.2",
 ]
 
 [project.scripts]

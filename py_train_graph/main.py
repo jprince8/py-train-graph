@@ -66,12 +66,12 @@ def _build_parser() -> argparse.ArgumentParser:
         "--margin-hours",
         type=int,
         default=0,
-        help="Hours to extend the window before and after (default 0).",
+        help="Hours to extend the window before (default 0).",
     )
     parser.add_argument(
         "-s",
-        "--spreadsheet",
-        dest="spreadsheets",
+        "--custom_timings",
+        dest="custom_timings",
         action="append",
         help="Path to a custom schedule CSV (may be used multiple times).",
     )
@@ -238,7 +238,7 @@ def main(argv: List[str] | None = None) -> None:
             start_time=cfg["start_time"],
             end_time=cfg["end_time"],
             margin_hours=cfg.get("margin_hours", 0),
-            spreadsheets=[Path(p) for p in cfg.get("spreadsheets", [])] or None,
+            custom_timings=[Path(p) for p in cfg.get("custom_timings", [])] or None,
             limit=cfg.get("limit"),
             direction=cfg.get("direction"),
             reverse_route=cfg.get("reverse_route"),
@@ -250,7 +250,7 @@ def main(argv: List[str] | None = None) -> None:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
-    spreadsheets = [Path(p) for p in args.spreadsheets] if args.spreadsheets else None
+    custom_timings = [Path(p) for p in args.custom_timings] if args.custom_timings else None
 
     plot.plot_services(
         distance_csv=args.route_csv,
@@ -259,7 +259,7 @@ def main(argv: List[str] | None = None) -> None:
         start_time=args.start_time,
         end_time=args.end_time,
         margin_hours=args.margin_hours,
-        spreadsheets=spreadsheets,
+        custom_timings=custom_timings,
         limit=args.limit,
         direction=args.direction,
         reverse_route=args.reverse_route,
