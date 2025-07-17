@@ -10,7 +10,7 @@ Plot up services between 03:00 and 06:00 with a one‑hour margin and show plot:
     py-train-graph routes/london_to_oxford.csv 2025-08-20 03:00 06:00 \
         -l PAD ACTONW HTRWAJN STL -m 1 --direction up
 
-Generate images only (no popup) and include two custom spreadsheets::
+Generate images only (no popup) and include two custom schedules::
 
     py-train-graph routes/london_to_oxford.csv 2025-08-20 05:00 07:00 \
         -l PAD ACTONW HTRWAJN STL \
@@ -70,8 +70,8 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-s",
-        "--custom_timings",
-        dest="custom_timings",
+        "--custom_schedules",
+        dest="custom_schedules",
         action="append",
         help="Path to a custom schedule CSV (may be used multiple times).",
     )
@@ -130,12 +130,12 @@ def _choose_preset_gui(presets_dir: Path) -> Path | None:
     return Path(file_path) if file_path else None
 
 
-def _resolve_preset_path(preset: str) -> Path:
+def _resolve_path(name_str: str, target_dir: str, ext: str) -> Path:
     """
-    Resolve a preset name or path:
-      • presets/name.json
-      • presets/name
-      • name.json
+    Resolve a name or path:
+      • [target_dir]/name.[ext]
+      • [target_dir]/name
+      • name.[ext]
       • name
 
     Raises
@@ -143,31 +143,31 @@ def _resolve_preset_path(preset: str) -> Path:
     FileNotFoundError
         If no valid preset file is found.
     """
-    presets_dir = Path("presets")
-    p = Path(preset)
+    target_dir = Path(target_dir)
+    p = Path(name_str)
 
     # 1. If the given path exists as is, use it
     if p.exists():
         return p
 
-    # Ensure .json suffix
+    # Ensure .[ext] suffix
     name = p.name
-    if not name.lower().endswith(".json"):
-        name += ".json"
+    if not name.lower().endswith(f".{ext}"):
+        name += f".{ext}"
 
-    # 2. Look in presets/ directory
-    candidate = presets_dir / name
+    # 2. Look in target_dir/ directory
+    candidate = target_dir / name
     if candidate.exists():
         return candidate
 
-    # 3. Check under given parent (e.g. presets/name)
+    # 3. Check under given parent (e.g. target_dir/name)
     if p.parent and p.parent.exists():
         candidate2 = p.parent / name
         if candidate2.exists():
             return candidate2
 
     # Not found: error out
-    raise FileNotFoundError(f"No preset file found for '{preset}' in '{presets_dir}' or as given path.")
+    raise FileNotFoundError(f"No preset file found for '{name_str}' in '{target_dir}' or as given path.")
 
 
 def _load_preset(path: Path) -> Dict[str, Any]:
@@ -227,7 +227,7 @@ def main(argv: List[str] | None = None) -> None:
 
     if pre_args.preset:
         # load everything from JSON
-        preset_path = _resolve_preset_path(pre_args.preset)
+        preset_path = _resolve_path(pre_args.preset, "presets", "json")
         cfg = _load_preset(preset_path)
         # merge with verbose
         cfg["show_plot"] = cfg.get("show_plot", True)
@@ -238,7 +238,7 @@ def main(argv: List[str] | None = None) -> None:
             start_time=cfg["start_time"],
             end_time=cfg["end_time"],
             margin_hours=cfg.get("margin_hours", 0),
-            custom_timings=[Path(p) for p in cfg.get("custom_timings", [])] or None,
+            custom_schedules=[Path(_resolve_path(p, "custom_schedules", "csv")) for p in cfg.get("custom_schedules", [])] or None,
             limit=cfg.get("limit"),
             direction=cfg.get("direction"),
             reverse_route=cfg.get("reverse_route"),
@@ -250,7 +250,7 @@ def main(argv: List[str] | None = None) -> None:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
-    custom_timings = [Path(p) for p in args.custom_timings] if args.custom_timings else None
+    custom_schedules = [Path(_resolve_path(p, "custom_schedules", "csv")) for p in args.custom_schedules] if args.custom_schedules else None
 
     plot.plot_services(
         distance_csv=args.route_csv,
@@ -259,7 +259,7 @@ def main(argv: List[str] | None = None) -> None:
         start_time=args.start_time,
         end_time=args.end_time,
         margin_hours=args.margin_hours,
-        custom_timings=custom_timings,
+        custom_schedules=custom_schedules,
         limit=args.limit,
         direction=args.direction,
         reverse_route=args.reverse_route,

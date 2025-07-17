@@ -19,8 +19,8 @@
   "always_include": [
     "2H75"
   ],
-  "spreadsheets": [
-    "custom_schedules/custom_schedule_example.csv"
+  "custom_schedules": [
+    "custom_schedule_example.csv"
   ],
   "limit": null,
   "reverse_route": null,

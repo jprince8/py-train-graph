@@ -3,7 +3,7 @@
 High‑level plotting utilities for *py‑train‑graph*.
 
 The public entry point is :pyfunc:`plot_services`, which plots one or more
-RealTimeTrains services (plus optional user spreadsheets) on a distance‑time
+RealTimeTrains services (plus optional user schedules) on a distance‑time
 graph and writes two PNG files:
 
 * ``..._overview.png`` – small figure, high DPI (for sharing)
@@ -169,7 +169,7 @@ def plot_services(
     end_time: str,
     margin_hours: int = 0,
     *,
-    custom_timings: list[str | Path] | None = None,
+    custom_schedules: list[str | Path] | None = None,
     limit: int | None = None,
     direction: str | None = None,  # 'up' or 'down'
     reverse_route: bool | None = None,
@@ -308,13 +308,13 @@ def plot_services(
             plt.pause(0.001)
 
     # ---------------------------------------------------------------------#
-    # Plot custom spreadsheets                                             #
+    # Plot custom schedules                                                #
     # ---------------------------------------------------------------------#
     custom_headcodes = []
-    if custom_timings and config.USE_CUSTOM:
+    if custom_schedules and config.USE_CUSTOM:
         custom_colours = iter(["#ff0000", "#ffaa00", "#00ff00", "#00aaff", "#aa00ff"])
 
-        for path in custom_timings:
+        for path in custom_schedules:
             df = parse.parse_manual_csv(path, distance_map, date_str)
             if df.empty:
                 continue

@@ -95,7 +95,7 @@ optional arguments:
   -p, --preset           name or path of a JSON preset (e.g. example_preset.json)
   -l, --locations        list of GB‑NR location codes (required) (e.g. PAD, ACTONW)
   -m, --margin-hours     extend window before (hours, default 0)
-  -s, --spreadsheet      custom CSV schedule (may repeat, e.g. custom_schedule_example.csv)
+  -s, --custom_schedule  custom CSV schedule (may repeat, e.g. custom_schedule_example.csv)
   -d, --direction        up | down
   -n, --limit            max RTT services plotted
   --reverse-route        plot distances negative
@@ -149,7 +149,7 @@ Save common parameters in a **JSON** file under `presets/`. Example structure:
   "margin_hours": 1,
   "direction": "down",
   "always_include": [],
-  "spreadsheets": ["custom_schedule_example.csv"],
+  "custom_schedules": ["custom_schedule_example.csv"],
   "limit": null,
   "reverse_route": null,
   "show_plot": null
