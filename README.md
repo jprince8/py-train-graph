@@ -23,14 +23,14 @@ CSV schedules.
 
 ## Installation
 
-Clone the repo:
+[Download a zip](https://github.com/jprince8/py-train-graph/archive/refs/heads/main.zip), and extract it:
+
+Or clone the repo:
 
 ```bash
 git clone https://github.com/your‑github/py‑train‑graph.git
 cd py‑train‑graph
 ```
-
-Or [download a zip](https://github.com/jprince8/py-train-graph/archive/refs/heads/main.zip), and extract it:
 
 ---
 
