@@ -29,7 +29,6 @@ Or clone the repo:
 
 ```bash
 git clone https://github.com/your‑github/py‑train‑graph.git
-cd py‑train‑graph
 ```
 
 ---
@@ -66,8 +65,8 @@ Alternatively, run using CLI arguments:
 ```
 
 ```bat
-.\launch-train-graph.bat routes/london_to_oxford.csv 2025-08-20 03:00 06:00 \
-  -l PAD ACTONW HTRWAJN STL \
+.\launch-train-graph.bat routes/london_to_oxford.csv 2025-08-20 03:00 06:00 `
+  -l PAD ACTONW HTRWAJN STL `
   -m 1 --direction up
 ```
 
