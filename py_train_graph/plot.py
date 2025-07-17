@@ -16,7 +16,6 @@ import logging
 from datetime import datetime as _dt, time as _time
 from pathlib import Path
 from typing import Iterable
-from bs4 import BeautifulSoup
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -26,7 +25,7 @@ from tqdm import tqdm
 
 from . import config, fetch, parse, utils
 
-__all__ = ["plot_services", "plot_distances"]
+__all__ = ["plot_services"]
 
 _LOG = logging.getLogger(__name__)
 
