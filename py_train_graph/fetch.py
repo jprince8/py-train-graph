@@ -26,7 +26,7 @@ _LOG = logging.getLogger(__name__)
 # requests‑cache integration (optional)                                      #
 # ---------------------------------------------------------------------------#
 
-_REQUESTS_CACHE_OK: Final[bool]
+_REQUESTS_CACHE_OK: bool
 _SESSION: requests.Session
 
 try:
