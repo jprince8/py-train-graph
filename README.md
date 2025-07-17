@@ -44,18 +44,18 @@ On **Linux/macOS**, launch via:
 
 or double-click `launch-train-graph.sh`.
 
-On **Windows**, double‑click `launch-train-graph.bat`
-(or run it in a terminal to pass arguments).
-
 ```bash
 # Full invocation:
-py-train-graph routes/london_to_oxford.csv 2025-08-20 03:00 06:00 \
+./scripts/launch-train-graph.sh routes/london_to_oxford.csv 2025-08-20 03:00 06:00 \
   -l PAD ACTONW HTRWAJN STL \
   -m 1 --direction up
 
 # Or use a preset:
-py-train-graph -p example_preset.json
+./scripts/launch-train-graph.sh -p example_preset.json
 ```
+
+On **Windows**, double‑click `launch-train-graph.bat`
+(or run it in a terminal to pass arguments).
 
 * Saves `graph_<headcodes>_<timestamp>_overview.png` (20 × 10 in, 400 dpi)  
 * Saves `graph_<headcodes>_<timestamp>_zoomable.png` (40 × 30 in, 100 dpi)  
