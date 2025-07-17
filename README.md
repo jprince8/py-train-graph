@@ -30,6 +30,9 @@ git clone https://github.com/your‑github/py‑train‑graph.git
 cd py‑train‑graph
 ```
 
+Or download a zip using the `code` button at the top, and extract it:
+![example output](resources/download_screenshot.png)
+
 ---
 
 ## Quick start
