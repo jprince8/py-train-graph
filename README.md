@@ -117,6 +117,8 @@ Create a CSV with at least these columns:
 | ...               | …         | …         |
 
 Times **must** be `HH:MM:SS`.  Use the `-s` flag to include one or more files.
+Set `same_custom_colour` to `true` in a preset to draw every custom schedule
+in the same colour.
 
 ---
 
@@ -152,7 +154,8 @@ Save common parameters in a **JSON** file under `presets/`. Example structure:
   "custom_schedules": ["custom_schedule_example.csv"],
   "limit": null,
   "reverse_route": null,
-  "show_plot": null
+  "show_plot": null,
+  "same_custom_colour": null
 }
 
 ```
