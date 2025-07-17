@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Final
 
 import requests
 
@@ -50,6 +49,7 @@ except ModuleNotFoundError:  # pragma: no cover
 # Manual disk cache fallback                                                 #
 # ---------------------------------------------------------------------------#
 
+
 def _manual_cache_path(url: str) -> Path:
     """Return the filesystem path for a cached copy of *url*."""
     return config.CACHE_DIR / utils.url_to_filename(url)
@@ -74,6 +74,7 @@ def _store_manual_cache(url: str, text: str) -> None:
 # ---------------------------------------------------------------------------#
 # Public API                                                                 #
 # ---------------------------------------------------------------------------#
+
 
 def get_html(url: str, *, force_refresh: bool = False) -> str:
     """

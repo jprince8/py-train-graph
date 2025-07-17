@@ -42,6 +42,9 @@ OVERVIEW_DPI: int = 400
 REVERSE_ROUTE: bool = True
 USE_CUSTOM: bool = True
 SHOW_PLOT: bool = True
+# If True, all custom schedules share the first colour in
+# the custom schedule colour list in :mod:`py_train_graph.plot`.
+SAME_CUSTOM_COLOUR: bool = False
 
 # ---------------------------------------------------------------------------#
 # External service URLs                                                      #
@@ -60,7 +63,7 @@ OPERATOR_COLOURS: dict[str, str] = {
     "Elizabeth Line": "#694ED6",
     "Heathrow Express": "#5e5e5e",
     "CrossCountry": "#aa007f",
-    'South Western Railway': '#00557f',
+    "South Western Railway": "#00557f",
     "Other": "#8B4513",
 }
 
@@ -68,6 +71,4 @@ OPERATOR_COLOURS: dict[str, str] = {
 # Operators to ignore                                                        #
 # ---------------------------------------------------------------------------#
 
-IGNORE_OPERATORS: list[str] = [
-    "RA1"
-]
+IGNORE_OPERATORS: list[str] = ["RA1"]

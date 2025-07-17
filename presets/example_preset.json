@@ -1,28 +1,25 @@
 {
-  "route_csv": "routes/london_to_oxford.csv",
-  "date": "2025-08-20",
-  "start_time": "20:30",
-  "end_time": "22:00",
-  "locations": [
-    "PAD",
-    "ACTONW",
-    "HTRWAJN",
-    "STL",
-    "REDGWJN",
-    "DIDCTNJ",
-    "RDG",
-    "OXF",
-    "DID"
-  ],
-  "margin_hours": 1,
-  "direction": "down",
-  "always_include": [
-    "2H75"
-  ],
-  "custom_schedules": [
-    "custom_schedule_example.csv"
-  ],
-  "limit": null,
-  "reverse_route": null,
-  "show_plot": null
+    "route_csv": "routes/london_to_oxford.csv",
+    "date": "2025-08-20",
+    "start_time": "20:30",
+    "end_time": "22:00",
+    "locations": [
+        "PAD",
+        "ACTONW",
+        "HTRWAJN",
+        "STL",
+        "REDGWJN",
+        "DIDCTNJ",
+        "RDG",
+        "OXF",
+        "DID",
+    ],
+    "margin_hours": 1,
+    "direction": "down",
+    "always_include": ["2H75"],
+    "custom_schedules": ["custom_schedule_example.csv"],
+    "limit": null,
+    "reverse_route": null,
+    "show_plot": null,
+    "same_custom_colour": null,
 }

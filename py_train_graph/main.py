@@ -167,7 +167,9 @@ def _resolve_path(name_str: str, target_dir: str, ext: str) -> Path:
             return candidate2
 
     # Not found: error out
-    raise FileNotFoundError(f"No preset file found for '{name_str}' in '{target_dir}' or as given path.")
+    raise FileNotFoundError(
+        f"No preset file found for '{name_str}' in '{target_dir}' or as given path."
+    )
 
 
 def _load_preset(path: Path) -> Dict[str, Any]:
@@ -238,11 +240,16 @@ def main(argv: List[str] | None = None) -> None:
             start_time=cfg["start_time"],
             end_time=cfg["end_time"],
             margin_hours=cfg.get("margin_hours", 0),
-            custom_schedules=[Path(_resolve_path(p, "custom_schedules", "csv")) for p in cfg.get("custom_schedules", [])] or None,
+            custom_schedules=[
+                Path(_resolve_path(p, "custom_schedules", "csv"))
+                for p in cfg.get("custom_schedules", [])
+            ]
+            or None,
             limit=cfg.get("limit"),
             direction=cfg.get("direction"),
             reverse_route=cfg.get("reverse_route"),
             show_plot=cfg["show_plot"],
+            same_custom_colour=cfg.get("same_custom_colour"),
             always_include=cfg.get("always_include", []),
         )
         return
@@ -250,7 +257,14 @@ def main(argv: List[str] | None = None) -> None:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
-    custom_schedules = [Path(_resolve_path(p, "custom_schedules", "csv")) for p in args.custom_schedules] if args.custom_schedules else None
+    custom_schedules = (
+        [
+            Path(_resolve_path(p, "custom_schedules", "csv"))
+            for p in args.custom_schedules
+        ]
+        if args.custom_schedules
+        else None
+    )
 
     plot.plot_services(
         distance_csv=args.route_csv,
@@ -264,6 +278,7 @@ def main(argv: List[str] | None = None) -> None:
         direction=args.direction,
         reverse_route=args.reverse_route,
         show_plot=args.show_plot,
+        same_custom_colour=None,
         always_include=args.always_include,
     )
 
