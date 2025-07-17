@@ -65,7 +65,7 @@ Generated images are placed under `outputs/` with descriptive filenames.
 
 ## Notes for development
 
-- No tests are provided.  Consider adding unit tests under a `tests/` directory.
+- Unit tests live under the `tests/` directory and can be run with `pytest`.
 - The codebase follows standard formatting (`black`) and linting (`ruff`).
 - Configuration constants (e.g. colours, cache dirs) can be overridden by
   editing `py_train_graph/config.py` or by modifying imported values.

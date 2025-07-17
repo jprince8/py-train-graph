@@ -34,3 +34,4 @@ def test_preset_calls_plot(monkeypatch, tmp_path):
 
     assert called["same_custom_colour"] is True
     assert called["limit"] == 10
+    assert called["show_plot"] is False
