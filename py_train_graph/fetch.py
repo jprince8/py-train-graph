@@ -95,7 +95,11 @@ def get_html(url: str, *, force_refresh: bool = False) -> str:
 
     # Either no cache hit, or user requested fresh, or using requests‑cache
     resp = _SESSION.get(url, timeout=30)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError as e:  # pragma: no cover - network failure
+        msg = f"HTTP error fetching {url}: {e}"
+        raise requests.HTTPError(msg) from e
     html = resp.text
 
     if not _REQUESTS_CACHE_OK:

@@ -48,8 +48,8 @@ On **Windows**, double‑click `launch-train-graph.bat`, or launch via:
 ```
 
 * Allows selection of a json preset file from the `presets` directory (additional preset files can be set up to create new graphs)
-* Saves `graph_<headcodes>_<timestamp>_overview.png` (20 × 10 in, 400 dpi)
-* Saves `graph_<headcodes>_<timestamp>_zoomable.png` (40 × 30 in, 100 dpi)
+* Saves `<route>_<date>_<start-end>_<direction>[_<headcodes>]_overview.png` (20×10 in, 400 dpi)
+* Saves `<route>_<date>_<start-end>_<direction>[_<headcodes>]_zoomable.png` (40×30 in, 100 dpi)
 * Opens the interactive plot window (`--no-show` to suppress)
 
 ---
@@ -95,7 +95,7 @@ optional arguments:
   -p, --preset           name or path of a JSON preset (e.g. example_preset.json)
   -l, --locations        list of GB‑NR location codes (required) (e.g. PAD, ACTONW)
   -m, --margin-hours     extend window before (hours, default 0)
-  -s, --custom_schedule  custom CSV schedule (may repeat, e.g. custom_schedule_example.csv)
+  -s, --custom_schedules custom CSV schedule (may repeat, e.g. custom_schedule_example.csv)
   -d, --direction        up | down
   -n, --limit            max RTT services plotted
   --reverse-route        plot distances negative

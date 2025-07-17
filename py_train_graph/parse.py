@@ -84,7 +84,7 @@ def fetch_service_metadata(html: str) -> tuple[date, str, str, bool]:
     Raises
     ------
     ValueError
-        If required elements are missing or the operator is in IGNORE_OPERATORS.
+        If required elements are missing.
     """
     soup = BeautifulSoup(html, "html.parser")
 
@@ -120,7 +120,9 @@ def fetch_service_metadata(html: str) -> tuple[date, str, str, bool]:
     return dep_date, headcode, operator, is_bus
 
 
-def parse_service_page(html: str, distance_map: pd.Series, start_date: date) -> pd.DataFrame:
+def parse_service_page(
+    html: str, distance_map: pd.Series, start_date: date
+) -> pd.DataFrame:
     """
     Parse a *single* RealTimeTrains service detail page into a DataFrame.
 
@@ -196,7 +198,9 @@ def _resolve_location(target: str, known_locations: pd.Index) -> str | None:
     return target if target in known_locations else None
 
 
-def parse_manual_csv(path: str | Path, distance_map: pd.Series, date_str: str) -> pd.DataFrame:
+def parse_manual_csv(
+    path: str | Path, distance_map: pd.Series, date_str: str
+) -> pd.DataFrame:
     """
     Parse a custom schedule CSV created by the user.
 
@@ -212,7 +216,12 @@ def parse_manual_csv(path: str | Path, distance_map: pd.Series, date_str: str) -
         Columns: ``Time`` (Timestamp) and ``Distance`` (float),
         sorted by time ascending.
     """
-    df = pd.read_csv(path)
+    try:
+        df = pd.read_csv(path)
+    except FileNotFoundError as e:  # pragma: no cover - user error
+        raise FileNotFoundError(f"Custom schedule not found: {path}") from e
+    except Exception as e:  # pragma: no cover - user error
+        raise ValueError(f"Failed reading custom schedule {path}: {e}") from e
 
     required = {"Location", "Arr", "Dep"}
     if not required.issubset(df.columns):
@@ -221,14 +230,19 @@ def parse_manual_csv(path: str | Path, distance_map: pd.Series, date_str: str) -
     df = df[["Location", "Arr", "Dep"]].copy()
 
     # strip out any “[…]” and surrounding whitespace from Location
-    df["Location"] = df["Location"].apply(lambda name: re.sub(r"\[.*?\]", "", name).strip())
+    df["Location"] = df["Location"].apply(
+        lambda name: re.sub(r"\[.*?\]", "", name).strip()
+    )
 
     # start_date is a datetime.date, e.g. from fetch_service_metadata
     base_ts = pd.Timestamp(date_str)  # midnight on your service date
 
-    # turn “HH:MM:SS” into a timedelta and add the base date in one go
-    df["Arr"] = pd.to_timedelta(df["Arr"]) + base_ts
-    df["Dep"] = pd.to_timedelta(df["Dep"]) + base_ts
+    # turn "HH:MM:SS" into a timedelta and add the base date in one go
+    try:
+        df["Arr"] = pd.to_timedelta(df["Arr"]) + base_ts
+        df["Dep"] = pd.to_timedelta(df["Dep"]) + base_ts
+    except Exception as e:  # pragma: no cover - user error
+        raise ValueError(f"Bad time format in {path}: {e}") from e
 
     df["Location"] = df["Location"].apply(
         lambda x: _resolve_location(str(x), distance_map.index)

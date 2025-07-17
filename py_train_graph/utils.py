@@ -101,9 +101,12 @@ def generate_rtt_urls(
         One URL per location.
     """
     fmt = "%H:%M"
-    date_obj = _dt.strptime(date, "%Y-%m-%d").date()
-    start_dt = _dt.strptime(start_time, fmt) - timedelta(hours=margin_hours)
-    end_dt = _dt.strptime(end_time, fmt)
+    try:
+        date_obj = _dt.strptime(date, "%Y-%m-%d").date()
+        start_dt = _dt.strptime(start_time, fmt) - timedelta(hours=margin_hours)
+        end_dt = _dt.strptime(end_time, fmt)
+    except ValueError as e:  # pragma: no cover - user error
+        raise ValueError(f"Bad date/time format: {e}") from e
 
     urls: list[str] = []
     end_str = min(end_dt, _dt.strptime("23:59", fmt)).strftime("%H%M")
