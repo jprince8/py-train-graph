@@ -259,8 +259,12 @@ def main(argv: List[str] | None = None) -> None:
 
         override = argparse.ArgumentParser(add_help=False)
         override.add_argument("-n", "--limit", type=int)
-        override.add_argument("--no-show", dest="show_plot", action="store_false", default=None)
-        override.add_argument("--show", dest="show_plot", action="store_true", default=None)
+        override.add_argument(
+            "--no-show", dest="show_plot", action="store_false", default=None
+        )
+        override.add_argument(
+            "--show", dest="show_plot", action="store_true", default=None
+        )
         override_args, _ = override.parse_known_args(remaining)
 
         if override_args.limit is not None:
@@ -277,15 +281,18 @@ def main(argv: List[str] | None = None) -> None:
             end_time=cfg["end_time"],
             margin_hours=cfg.get("margin_hours", 0),
             custom_schedules=[
-                Path(_resolve_path(p, "custom_schedules", "csv"))
-                for p in cfg.get("custom_schedules", [])
+                (
+                    [Path(_resolve_path(p, "custom_schedules", "csv")) for p in group]
+                    if isinstance(group, list)
+                    else Path(_resolve_path(group, "custom_schedules", "csv"))
+                )
+                for group in cfg.get("custom_schedules", [])
             ]
             or None,
             limit=cfg.get("limit"),
             direction=cfg.get("direction"),
             reverse_route=cfg.get("reverse_route"),
             show_plot=cfg["show_plot"],
-            same_custom_colour=cfg.get("same_custom_colour"),
             always_include=cfg.get("always_include", []),
         )
         return
@@ -314,7 +321,6 @@ def main(argv: List[str] | None = None) -> None:
         direction=args.direction,
         reverse_route=args.reverse_route,
         show_plot=args.show_plot,
-        same_custom_colour=None,
         always_include=args.always_include,
     )
 

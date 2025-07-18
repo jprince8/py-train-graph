@@ -42,9 +42,6 @@ OVERVIEW_DPI: int = 400
 REVERSE_ROUTE: bool = True
 USE_CUSTOM: bool = True
 SHOW_PLOT: bool = True
-# If True, all custom schedules share the first colour in
-# the custom schedule colour list in :mod:`py_train_graph.plot`.
-SAME_CUSTOM_COLOUR: bool = False
 
 # ---------------------------------------------------------------------------#
 # External service URLs                                                      #

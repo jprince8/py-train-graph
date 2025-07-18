@@ -20,7 +20,6 @@ def test_preset_calls_plot(monkeypatch, tmp_path):
         "limit": 10,
         "reverse_route": None,
         "show_plot": False,
-        "same_custom_colour": True,
     }
     preset_path = tmp_path / "preset.json"
     preset_path.write_text(json.dumps(preset), encoding="utf-8")
@@ -35,7 +34,9 @@ def test_preset_calls_plot(monkeypatch, tmp_path):
     )
     main.main(["--preset", str(preset_path)])
 
-    assert called["same_custom_colour"] is True
+    assert called["custom_schedules"] == [
+        Path("custom_schedules/custom_schedule_example.csv")
+    ]
     assert called["limit"] == 10
     assert called["show_plot"] is False
 
@@ -79,5 +80,3 @@ def test_example_preset_real_run(monkeypatch):
     main.main(["--preset", "example_preset", "-n", "10", "--no-show"])
     duration = time.perf_counter() - start
     assert duration >= 5
-
-
