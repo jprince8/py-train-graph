@@ -199,12 +199,11 @@ def plot_services(
     end_time: str,
     margin_hours: int = 0,
     *,
-    custom_schedules: list[str | Path] | None = None,
+    custom_schedules: list[str | Path] | list[list[str | Path]] | None = None,
     limit: int | None = None,
     direction: str | None = None,  # 'up' or 'down'
     reverse_route: bool | None = None,
     show_plot: bool | None = None,
-    same_custom_colour: bool | None = None,
     always_include: list[str] | None = None,
 ) -> None:
     """
@@ -214,17 +213,14 @@ def plot_services(
     ----------
     always_include
         Headcodes that skip the direction filter regardless of *direction*.
-    same_custom_colour
-        If ``True``, all custom schedules share the first colour in the
-        custom schedule colour list.
-
+    custom_schedules
+        Accepts a list of CSV paths or a list of lists.  If a plain list is
+        provided each schedule gets its own colour.  Inner lists group
+        schedules so entries in the same sub-list share a colour.
     Images are written to :pydata:`config.OUTPUT_DIR` with timestamped filenames.
     """
     reverse_route = config.REVERSE_ROUTE if reverse_route is None else reverse_route
     show_plot = config.SHOW_PLOT if show_plot is None else show_plot
-    same_custom_colour = (
-        config.SAME_CUSTOM_COLOUR if same_custom_colour is None else same_custom_colour
-    )
     always_include = [hc.upper() for hc in always_include or []]
 
     # ---------------------------------------------------------------------#
@@ -351,60 +347,63 @@ def plot_services(
     custom_headcodes = []
     if custom_schedules and config.USE_CUSTOM:
         colour_list = ["#ff0000", "#ffaa00", "#00ff00", "#00aaff", "#aa00ff"]
-        # Optionally use the first colour for every custom schedule
-        custom_colours = (
-            itertools.repeat(colour_list[0])
-            if same_custom_colour
-            else iter(colour_list)
-        )
+        custom_colours = itertools.cycle(colour_list)
 
-        for path in custom_schedules:
-            df = parse.parse_manual_csv(path, distance_map, date_str)
-            if df.empty:
-                continue
+        groups: list[list[Path]]
+        first = custom_schedules[0]
+        if isinstance(first, (list, tuple)):
+            groups = [list(map(Path, g)) for g in custom_schedules]  # type: ignore[arg-type]
+        else:
+            groups = [[Path(p)] for p in custom_schedules]
 
-            # Filter to window
-            mask = df["Time"].apply(lambda t: start_dt <= t.time() <= end_dt)
-            df_window = df.loc[mask]
-
-            if df_window.empty:
-                continue
-
-            headcode = Path(path).stem
-            headcode_upper = headcode.upper()
-
-            # direction filter unless headcode always included
-            if direction and headcode_upper not in always_include:
-                diffs = np.diff(df["Distance"])
-                if reverse_route:
-                    if direction == "up" and not np.all(diffs >= 0):
-                        continue
-                    if direction == "down" and not np.all(diffs <= 0):
-                        continue
-                else:
-                    if direction == "up" and not np.all(diffs <= 0):
-                        continue
-                    if direction == "down" and not np.all(diffs >= 0):
-                        continue
-
+        for group in groups:
             colour = next(custom_colours)
-            _plot_dataframe(
-                ax,
-                df["Time"],
-                df["Distance"],
-                headcode=headcode,
-                color=colour,
-                linewidth=2.0,
-                marker_size=4.0,
-                direction=direction or "up",
-                end_time=end_dt,
-                reverse_route=reverse_route,
-            )
-            plotted.append((headcode, str(path)))
-            custom_headcodes.append(headcode)
-            if show_plot:
-                fig.canvas.draw()
-                plt.pause(0.001)
+            for path in group:
+                df = parse.parse_manual_csv(path, distance_map, date_str)
+                if df.empty:
+                    continue
+
+                # Filter to window
+                mask = df["Time"].apply(lambda t: start_dt <= t.time() <= end_dt)
+                df_window = df.loc[mask]
+
+                if df_window.empty:
+                    continue
+
+                headcode = Path(path).stem
+                headcode_upper = headcode.upper()
+
+                # direction filter unless headcode always included
+                if direction and headcode_upper not in always_include:
+                    diffs = np.diff(df["Distance"])
+                    if reverse_route:
+                        if direction == "up" and not np.all(diffs >= 0):
+                            continue
+                        if direction == "down" and not np.all(diffs <= 0):
+                            continue
+                    else:
+                        if direction == "up" and not np.all(diffs <= 0):
+                            continue
+                        if direction == "down" and not np.all(diffs >= 0):
+                            continue
+
+                _plot_dataframe(
+                    ax,
+                    df["Time"],
+                    df["Distance"],
+                    headcode=headcode,
+                    color=colour,
+                    linewidth=2.0,
+                    marker_size=4.0,
+                    direction=direction or "up",
+                    end_time=end_dt,
+                    reverse_route=reverse_route,
+                )
+                plotted.append((headcode, str(path)))
+                custom_headcodes.append(headcode)
+                if show_plot:
+                    fig.canvas.draw()
+                    plt.pause(0.001)
 
     if not plotted:
         _LOG.warning("No services plotted — nothing to save")

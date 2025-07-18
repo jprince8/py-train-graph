@@ -20,6 +20,5 @@
     "custom_schedules": ["custom_schedule_example.csv"],
     "limit": null,
     "reverse_route": null,
-    "show_plot": null,
-    "same_custom_colour": null
+    "show_plot": null
 }
