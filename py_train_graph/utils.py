@@ -41,11 +41,14 @@ def parse_hhmm_half(text: str | float | int | None) -> pd.Timestamp | None:
     """
     if pd.isna(text):
         return None
-    text = str(text).strip().replace("½", ".5")
+    raw = str(text).strip()
+    has_half = "½" in raw
+    hhmm = raw.replace("½", "")
     try:
-        if "." in text:
-            return pd.to_datetime(text, format="%H%M.%f")
-        return pd.to_datetime(text, format="%H%M")
+        ts = pd.to_datetime(hhmm, format="%H%M")
+        if has_half:
+            ts += pd.Timedelta(seconds=30)
+        return ts
     except Exception:
         return None
 
